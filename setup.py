@@ -15,7 +15,7 @@ test_requires = []
 entry_points = ""
 
 setup(name='pyramid_redis_session',
-      version=0.3,
+      version=0.4,
       description='provide redis implementation for pyramid\'s ISessionFactory and ISession',
       long_description=README,
       classifiers=[

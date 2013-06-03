@@ -29,3 +29,7 @@ session_factory = pyramid_redis_session.session_factory_from_settings(settings)
 config.set_session_factory(session_factory)
 ```
 
+New methods not in pyramid_beaker
+---------------------------------
+1. ```set_expire(expire)``` allow changing the expire header for specific key.
+1. ```multi_set(d)``` update the session from a dict object

@@ -134,13 +134,8 @@ def RedisSessionFactory(**options):
 
         def __save(self):
             if self._data is not None and len(self._data):
-            #                print '[__save]', self.id, 'expire:', self._options['_expire']
                 self.__init_rd(master=True)
-                pipe = self.rd.pipeline()
-                k = self.__key()
-                pipe.set(k, msgpack.packb(self._data, encoding='utf-8'))
-                pipe.expire(k, self._options['_expire'])
-                pipe.execute()
+                self.rd.setex(self.__key(), self._options['_expire'], msgpack.packb(self._data, encoding='utf-8'))
 
         def __create_id(self):
             self.id = hashlib.sha1(hashlib.sha1("%f%s%f%s" % (time.time(), id({}), random.random(), getpid())).hexdigest(), ).hexdigest()
@@ -154,6 +149,9 @@ def RedisSessionFactory(**options):
             self.id = session_id
             self._data = None
             return self
+
+        def set_expire(self, expire):
+            self._options['_expire'] = expire
 
         # ISession API
         def save(self):
@@ -260,6 +258,13 @@ def RedisSessionFactory(**options):
             self.__load()
             for k in self._data.keys():
                 d[k] = self._data[k]
+
+        def multi_set(self, d):
+#            print '[update]', self.id
+            self.__load()
+            for k in d.keys():
+                self._data[k] = d[k]
+            self._changed = True
 
         def setdefault(self, key, default=None):
             """D.setdefault(k[,d]) -> D.get(k,d), also set D[k]=d if k not in D"""
