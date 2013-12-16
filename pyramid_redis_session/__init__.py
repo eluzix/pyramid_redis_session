@@ -294,6 +294,10 @@ def RedisSessionFactory(**options):
             self.__load()
             return key in self._data
 
+        @property
+        def new(self):
+            return self._new_session
+
     #factory end
     return RedisSessionObject
 
